@@ -1,0 +1,18 @@
+apiVersion: v1
+clusters:
+- cluster:
+    insecure-skip-tls-verify: true
+    server: http://127.0.0.1:37615/
+  name: default/ci-master/admin
+contexts:
+- context:
+    cluster: default/ci-master/admin
+    user: admin
+  name: default/ci-master/admin
+current-context: default/ci-master/admin
+kind: Config
+preferences: {}
+users:
+- name: simple-monitoring-admin
+  user:
+    token: eyJhbGciOiJSUzI1NiIsImtpZCI6IlNQQklCVlZFc1NGQ1VxOTJqWXVISHMtU01FTVQtYWZDNkNvVVpibWM3bFkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJzaW1wbGUtbW9uaXRvcmluZy1hZG1pbi10b2tlbi04bjl2OSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJzaW1wbGUtbW9uaXRvcmluZy1hZG1pbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjM1NTNmMGQ3LTY0MTUtNGUzNy1iMjI4LTdhMzEwMmMxNzkxMiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTpzaW1wbGUtbW9uaXRvcmluZy1hZG1pbiJ9.OPhZr8IK2WJ_94nbS9f7Iz4KlFjZ1kuTwF8TD1SKM3zJyQALzb_1UNWuf4rnCZLdh5fW2PVa8eTZaNc0-8-RbSaBia6IP5oCohGmgGnYy0LvCR1h2cYEOAdf2CsLYJSywZYaMqwrCNzjE0XU9BGbqGLYwZQ7LEq9hz6CBoH-gvLJTelxqWsnGQ2Y2595HXrJWQktSWwIlYs5mF1MJa4utV6PJx-zQzkfs_DjDDJzkMr3KMX36TICRzgT1MJQ5wIkRbAX9zStVDx_ivK9mpQCuvxsWJRyIYBrcj9gD4B9yIlpuSYpIaejkNiY0WL_opAOr4Xm6G664ioJfLypY4Msgg

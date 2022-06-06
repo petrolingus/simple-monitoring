@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: simple-monitoring
+    app.kubernetes.io/component: monitoring
+  name: simple-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: simple-monitoring
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: simple-monitoring
+    spec:
+      containers:
+        - name: simple-monitoring
+          image: petrolingus/simple-monitoring:latest
+          ports:
+            - name: web
+              containerPort: 8080

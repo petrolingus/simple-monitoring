@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Live Update</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="form-group">
+    <label for="namespaces">Namespace:</label>
+    <select id="namespaces" onchange="OnChangedNamespaceSelector()"></select>
+    <label for="pods">Pod:</label>
+    <select id="pods" onchange="OnChangedSelector()"></select>
+    <p id="port">Port: </p>
+    <p id="path">Path: </p>
+</div>
+<div id="container"></div>
+<script>
+
+    const selectNamespaces = document.getElementById('namespaces');
+    const selectPods = document.getElementById('pods');
+    const port = document.getElementById('port');
+    const path = document.getElementById('path');
+
+    let pods;
+
+    let selectedIds = {
+        'pods': 0,
+        'namespaces': 0
+    };
+
+    function OnChangedNamespaceSelector() {
+        selectedIds['namespaces'] = selectNamespaces.options.selectedIndex;
+        selectedIds['pods'] = 0;
+        selectPods.options[selectedIds['pods']].selected = "true";
+        GetAllPods();
+    }
+
+    function OnChangedSelector() {
+        selectedIds['pods'] = selectPods.options.selectedIndex;
+    }
+
+    function SendRequest(method, path, args, handler) {
+        let request = new XMLHttpRequest();
+        request.responseType = 'json';
+        request.onreadystatechange = function () {
+            if (request.readyState === 4) {
+                handler(request);
+            }
+        }
+        if (args.length > 0) {
+            path += "?" + args;
+        }
+        request.open(method, path, true);
+        request.send(null);
+    }
+
+    function GetAllPods() {
+        let Handler = function (request) {
+
+            pods = JSON.parse(request.response);
+
+            selectNamespaces.options.length = 0;
+            let namespaceSet = new Set();
+            Object.keys(pods).forEach(pod => namespaceSet.add(pods[pod]['namespace']));
+            for (let n of namespaceSet) {
+                selectNamespaces.add(new Option(n))
+            }
+            selectNamespaces.options[selectedIds['namespaces']].selected = "true";
+
+            selectPods.options.length = 0;
+            Object.keys(pods).forEach(pod => {
+                if (pods[pod]['namespace'] === selectNamespaces.options[selectedIds['namespaces']].value) {
+                    selectPods.add(new Option(pod, pod))
+                }
+            });
+            selectPods.options[selectedIds['pods']].selected = "true";
+
+            port.innerText = "Port: " + pods[selectPods.value]['metrics_port'];
+            path.innerText = "Metrics Path: " + pods[selectPods.value]['metrics_path'];
+        }
+        SendRequest("GET", "get_all_pods", "", Handler);
+    }
+
+    function GetMetrics() {
+        let handler = function (request) {
+            let jsonData = JSON.parse(request.response);
+            document.getElementById('container').innerHTML = jsonData.join("<br>");
+        }
+        let namespaceExist = selectNamespaces.options[selectedIds['namespaces']]
+        if (namespaceExist != null) {
+            let namespace = namespaceExist.value
+            let pod = selectPods.options[selectedIds['pods']].value
+            let port = pods[selectPods.value]['metrics_port'];
+            let path = pods[selectPods.value]['metrics_path']
+            let params = `pod_name=${pod}&pod_port=${port}&namespace=${namespace}&metrics_path=${path}`
+            SendRequest("GET", "get_metrics", params, handler);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function ready() {
+        GetAllPods()
+        GetMetrics()
+        setInterval(GetAllPods, 1000);
+        setInterval(GetMetrics, 500);
+    });
+</script>
+</body>
+</html>
